@@ -65,7 +65,10 @@ openvpn_add_instance() {
 		--syslog "openvpn($name)" \
 		--status "/var/run/openvpn.$name.status" \
 		--cd "$dir" \
-		--config "$conf"
+		--config "$conf" \
+		--user nobody \
+		--group nogroup \
+		--chroot /var/tmp/openvpn
 	procd_set_param file "$dir/$conf"
 	procd_set_param respawn
 	procd_append_param respawn 3600
@@ -86,6 +89,7 @@ start_instance() {
 	}
 
 	[ ! -d "/var/run" ] && mkdir -p "/var/run"
+	[ ! -d "/var/tmp/openvpn" ] && mkdir -p "/var/tmp/openvpn"
 
 	if [ ! -z "$config" ]; then
 		append UCI_STARTED "$config" "$LIST_SEP"
