@@ -46,6 +46,12 @@ config PACKAGE_odhcpd_$(2)_ext_cer_id
 	int
 	default 0
 	prompt "CER-ID Extension ID (0 = disabled)"
+
+config PACKAGE_odhcpd_$(2)_capsh
+	bool
+	default 0
+	select CONFIG_PACKAGE_libcap-bin
+	prompt "Use capsh to drop capabilities"
 endmenu
 endef
 
@@ -98,6 +104,9 @@ define Package/odhcpd/install
 	$(INSTALL_BIN) ./files/odhcpd-update $(1)/usr/sbin/
 	$(INSTALL_DIR) $(1)/etc/init.d
 	$(INSTALL_BIN) ./files/odhcpd.init $(1)/etc/init.d/odhcpd
+ifneq ($(CONFIG_PACKAGE_odhcpd_$(BUILD_VARIANT)_capsh),)
+	sed -i 's|^\s*procd_set_param command /usr/sbin/odhcpd.*$$$$|\tlocal DROP_CAPS="cap_chown,cap_dac_override,cap_dac_read_search,cap_fowner,cap_fsetid,cap_kill,cap_setgid,cap_setuid,cap_setpcap,cap_linux_immutable,cap_net_admin,cap_ipc_lock,cap_ipc_owner,cap_sys_module,cap_sys_rawio,cap_sys_chroot,cap_sys_ptrace,cap_sys_pacct,cap_sys_admin,cap_sys_boot,cap_sys_nice,cap_sys_resource,cap_sys_time,cap_sys_tty_config,cap_mknod,cap_lease,cap_audit_write,cap_audit_control,cap_setfcap,cap_mac_override,cap_mac_admin,cap_syslog,cap_wake_alarm,cap_block_suspend,cap_audit_read+epi"\n\tprocd_set_param command /usr/sbin/capsh --drop="$$$${DROP_CAPS}" -- -c "exec /usr/sbin/odhcpd -l5"|' $(1)/etc/init.d/odhcpd
+endif
 	$(INSTALL_DIR) $(1)/etc/uci-defaults
 	$(INSTALL_BIN) ./files/odhcpd.defaults $(1)/etc/uci-defaults/15_odhcpd
 endef
