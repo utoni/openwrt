@@ -31,6 +31,14 @@ define Package/netifd/conffiles
 /etc/udhcpc.user.d/
 endef
 
+define Package/netifd/config
+  config PACKAGE_netifd_capsh
+	bool
+	default 0
+	select CONFIG_PACKAGE_libcap-bin
+	prompt "Use capsh to drop capabilities"
+endef
+
 TARGET_CFLAGS += \
 	-I$(STAGING_DIR)/usr/include/libnl-tiny \
 	-I$(STAGING_DIR)/usr/include
