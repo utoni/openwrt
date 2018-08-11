@@ -30,6 +30,19 @@ export LDFLAGS="-L${TARGET_DIR}/usr/lib -L${TARGET_DIR_ROOT}/usr/lib"
 export PKG_CONFIG_PATH="${TARGET_DIR}/usr/lib/pkgconfig"
 export PKG_CONFIG_LIBDIR="${TARGET_DIR}/usr/lib/pkgconfig"
 
+# set some optional CGO vars for xcompile
+export CGO_ENABLED=1
+export GO_EXTLINK_ENABLED=1
+export GOARCH="${ARCH}"
+if cat "${OWRT}/.config" | grep -qoE 'CONFIG_arm_v7'; then
+    echo "* GOARM=7"
+    export GOARM=7
+fi
+if cat "${OWRT}/.config" | grep -qoE 'CONFIG_arm_v6'; then
+    echo "* GOARM=6"
+    export GOARM=6
+fi
+
 check_dirs[0]="${TOOLCHAIN_DIR}"
 check_dirs[1]="${TARGET_DIR}"
 check_dirs[2]="${TARGET_DIR_ROOT}"
