@@ -13,7 +13,14 @@ echo "* CPU TYPE..: ${CPU_TYPE}"
 TARGET_BOARD="$(cat ${OWRT}/.config | sed -n 's/^CONFIG_TARGET_BOARD="\(.*\)"$/\1/p')"
 echo "* TARGET....: ${TARGET_BOARD}"
 
-TOOLCHAIN_DIR="$(realpath ${OWRT}/staging_dir/toolchain-${ARCH}_${CPU_TYPE}*)"
+GCC_VER="$(cat ${OWRT}/.config | sed -n 's/CONFIG_GCC_VERSION="\(.*\)"$/\1/p')"
+echo "* GCC Ver...: ${GCC_VER}"
+
+LIBC="$(cat ${OWRT}/.config | sed -n 's/CONFIG_LIBC="\(.*\)"$/\1/p')"
+echo "* libc......: ${LIBC}"
+
+# example: toolchain-arm_cortex-a9+vfpv3_gcc-7.4.0_musl_eabi
+TOOLCHAIN_DIR="$(realpath ${OWRT}/staging_dir/toolchain-${ARCH}_${CPU_TYPE}_gcc-${GCC_VER}_${LIBC}_*)"
 echo "* Toolchain.: ${TOOLCHAIN_DIR}"
 
 export PATH="${TOOLCHAIN_DIR}/bin:${PATH}"
@@ -25,7 +32,7 @@ export CXX="${HOST}-g++"
 export CFLAGS="-I${TARGET_DIR}/usr/include"
 export CXXFLAGS="${CFLAGS}"
 TARGET_DIR_ROOT="$(realpath ${TARGET_DIR}/root-${TARGET_BOARD})"
-echo "* Target dir: ${TARGET_DIR_ROOT}"
+echo "* Root......: ${TARGET_DIR_ROOT}"
 export LDFLAGS="-L${TARGET_DIR}/usr/lib -L${TARGET_DIR_ROOT}/usr/lib"
 export PKG_CONFIG_PATH="${TARGET_DIR}/usr/lib/pkgconfig"
 export PKG_CONFIG_LIBDIR="${TARGET_DIR}/usr/lib/pkgconfig"
