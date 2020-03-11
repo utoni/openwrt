@@ -34,6 +34,7 @@ export CXXFLAGS="${CFLAGS}"
 TARGET_DIR_ROOT="$(realpath ${TARGET_DIR}/root-${TARGET_BOARD})"
 echo "* Root......: ${TARGET_DIR_ROOT}"
 export LDFLAGS="-L${TARGET_DIR}/usr/lib -L${TARGET_DIR_ROOT}/usr/lib"
+export PKG_CONFIG="${STAGING_DIR}/host/bin/pkg-config.real"
 export PKG_CONFIG_PATH="${TARGET_DIR}/usr/lib/pkgconfig"
 export PKG_CONFIG_LIBDIR="${TARGET_DIR}/usr/lib/pkgconfig"
 
