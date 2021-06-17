@@ -23,7 +23,7 @@ echo "* libc......: ${LIBC}"
 TOOLCHAIN_DIR="$(realpath ${OWRT}/staging_dir/toolchain-${ARCH}_${CPU_TYPE}_gcc-${GCC_VER}_${LIBC}_*)"
 echo "* Toolchain.: ${TOOLCHAIN_DIR}"
 
-export PATH="${TOOLCHAIN_DIR}/bin:${PATH}"
+export PATH="${TOOLCHAIN_DIR}/bin:${OWRT}/staging_dir/host/bin:${OWRT}/staging_dir/host/usr/bin:${OWRT}/staging_dir/hostpkg/bin:${OWRT}/staging_dir/hostpkg/usr/bin:${PATH}"
 export STAGING_DIR="${OWRT}/staging_dir"
 TARGET_DIR="$(realpath ${STAGING_DIR}/target-${ARCH}_${CPU_TYPE}*)"
 echo "* Target dir: ${TARGET_DIR}"
@@ -37,6 +37,23 @@ export LDFLAGS="-L${TARGET_DIR}/usr/lib -L${TARGET_DIR_ROOT}/usr/lib"
 export PKG_CONFIG="${STAGING_DIR}/host/bin/pkg-config.real"
 export PKG_CONFIG_PATH="${TARGET_DIR}/usr/lib/pkgconfig"
 export PKG_CONFIG_LIBDIR="${TARGET_DIR}/usr/lib/pkgconfig"
+
+# CMake variables
+export CMAKE_C_COMPILER_AR="${HOST}-ar"
+export CMAKE_C_COMPILER_RANLIB="${HOST}-ranlib"
+export CMAKE_LINKER="${HOST}-ld"
+export CMAKE_NM="${HOST}-nm"
+export CMAKE_OBJCOPY="${HOST}-objcopy"
+export CMAKE_OBJDUMP="${HOST}-objdump"
+export CMAKE_RANLIB="${HOST}-ranlib"
+export CMAKE_STRIP="${HOST}-strip"
+
+export CMAKE_FIND_ROOT_PATH="${OWRT} ${TARGET_DIR} ${TOOLCHAIN_DIR}"
+# search for programs in the build host directories
+export CMAKE_FIND_ROOT_PATH_MODE_PROGRAM=NEVER
+# for libraries and headers in the target directories
+export CMAKE_FIND_ROOT_PATH_MODE_LIBRARY=ONLY
+export CMAKE_FIND_ROOT_PATH_MODE_INCLUDE=ONLY
 
 # set some optional CGO vars for xcompile
 export CGO_ENABLED=1
