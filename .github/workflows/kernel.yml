@@ -19,6 +19,7 @@ on:
       - 'target/linux/**'
     branches-ignore:
       - master
+      - linksys3200ac-master
 
 permissions:
   contents: read
